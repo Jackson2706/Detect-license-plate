@@ -1,23 +1,14 @@
-import timeit
 
-### importing required libraries
 import torch
 import cv2
 import time
 import pytesseract
-import re
-import numpy as np
-#test
-from PIL import Image
-from PIL import ImageEnhance
-import argparse
-import os
 
 
 
 ##### DEFINING GLOBAL VARIABLE
 
-OCR_TH = 0.2
+OCR_TH = 0.9
 
 
 
@@ -135,6 +126,9 @@ def read_text(img):
     custom_config = r'--oem 3 --psm 6'
     text = pytesseract.image_to_string(img,config=custom_config)
     text = text.replace(" ","")
+    if text[-1] == "\n":
+        text = text.replace("\n", '-')
+        text = text[0:-1]
     # print(type(text))
     # print(text)
     text_1 = ""
@@ -148,10 +142,10 @@ def read_text(img):
         if (i == 2 and text[i] == '8'):
             text_1 = text_1 + 'B'
             continue
-        if text[i].isalnum() or (i == 3 and text[i] == "-") or (i == 7 and text[i] == '.') : 
+        if text[i].isalnum() or (i == 3 and text[i] == "-") or (i == 7 and text[i] == '.') :
             text_1 = text_1 + text[i]
     # Xóa ảnh tạm sau khi nhận dạng
-    return text_1
+    return text
 
 
 ### to filter out wrong detections 
@@ -168,8 +162,6 @@ def read_text(img):
 #         if length*height / rectangle_size > region_threshold:
 #             plate.append(result[1])
 #     return plate
-
-
 
 
 
@@ -217,7 +209,7 @@ def main(img_path=None, vid_path=None,vid_out = None):
 
 # ### for custom video
 # main(vid_path=0,vid_out="result/mp4") #### for webcam
-main(img_path="test_images/7.png") ## for image
+main(img_path="test_images/3.jpg") ## for image
 
 
 
