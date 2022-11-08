@@ -88,7 +88,7 @@ def plot_boxes(results, frame,classes):
 
 # function to recognize license plate numbers using  OCR
 def read_text(img):
-    img = cv2.resize(img, None, fx=5, fy=5, interpolation=cv2.INTER_CUBIC)
+    img = cv2.resize(img, None, fx=8, fy=8, interpolation=cv2.INTER_CUBIC)
     cv2.imshow("origi",img)
     img1 = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     ret1,img2 = cv2.threshold(img1,145,250,cv2.THRESH_BINARY)
@@ -217,7 +217,7 @@ def main(img_path=None, vid_path=None,vid_out = None):
 
 # ### for custom video
 # main(vid_path=0,vid_out="result/mp4") #### for webcam
-main(img_path="test_images/9.png") ## for image
+main(img_path="test_images/7.png") ## for image
 
 
 
