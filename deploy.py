@@ -1,3 +1,4 @@
+import timeit
 
 ### importing required libraries
 import torch
@@ -115,7 +116,7 @@ def read_text(img):
     # img = cv2.adaptiveThreshold(cv2.medianBlur(img, 3), 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 31, 2)
     cv2.imshow("crop", img)
     # return " "
-    pytesseract.pytesseract.tesseract_cmd = 'C:\\Program Files\\Tesseract-OCR\\tesseract.exe'
+    pytesseract.pytesseract.tesseract_cmd = "C:\Program Files\Tesseract-OCR\\tesseract.exe"
     # gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY) 
     #elif args["preprocess"] == "blur":
     #gray = cv2.GaussianBlur(gray, (3, 3), 0)
@@ -188,6 +189,7 @@ def main(img_path=None, vid_path=None,vid_out = None):
 
     ### --------------- for detection on image --------------------
     if img_path != None:
+        start = time.time()
         print(f"[INFO] Working with image: {img_path}")
         img_out_name = f"./output/result_{img_path.split('/')[-1]}"
 
@@ -199,74 +201,14 @@ def main(img_path=None, vid_path=None,vid_out = None):
         frame = cv2.cvtColor(frame,cv2.COLOR_RGB2BGR)
         # cv2.imshow("frames1", frame)
         frame = plot_boxes(results, frame,classes = classes)
-        # cv2.imshow("frames2", frame)
-
-
-        cv2.namedWindow("img_only", cv2.WINDOW_NORMAL) ## creating a free windown to show the result
-
-        while True:
-            # frame = cv2.cvtColor(frame,cv2.COLOR_RGB2BGR)
-
-            cv2.imshow("img_only", frame)
-
-            if cv2.waitKey(5) & 0xFF == ord('q'):
-                print(f"[INFO] Exiting. . . ")
-
-                cv2.imwrite(f"{img_out_name}",frame) ## if you want to save he output result.
-
-                break
-
-    ### --------------- for detection on video --------------------
-    elif vid_path !=None:
-        print(f"[INFO] Working with video: {vid_path}")
-
-        ## reading the video
-        cap = cv2.VideoCapture(vid_path)
-
-
-        if vid_out: ### creating the video writer if video output path is given
-
-            # by default VideoCapture returns float instead of int
-            width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
-            height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
-            fps = int(cap.get(cv2.CAP_PROP_FPS))
-            codec = cv2.VideoWriter_fourcc(*'mp4v') ##(*'XVID')
-            out = cv2.VideoWriter(vid_out, codec, fps, (width, height))
-
-        # assert cap.isOpened()
-        frame_no = 1
-
-        cv2.namedWindow("vid_out", cv2.WINDOW_NORMAL)
-        while True:
-            # start_time = time.time()
-            ret, frame = cap.read()
-            if ret  and frame_no %1 == 0:
-                print(f"[INFO] Working with frame {frame_no} ")
-
-                frame = cv2.cvtColor(frame,cv2.COLOR_BGR2RGB)
-                results = detectx(frame, model = model)
-                # cv2.imshow("",results)
-                frame = cv2.cvtColor(frame,cv2.COLOR_RGB2BGR)
-
-
-                frame= plot_boxes(results, frame,classes = classes)
-
-                cv2.imshow("vid_out", frame)
-            
-                if vid_out:
-                    print(f"[INFO] Saving output video. . . ")
-                    out.write(frame)
-
-                if cv2.waitKey(5) & 0xFF == ord('q'):
-                    break
-                frame_no += 1
-        
-        print(f"[INFO] Clening up. . . ")
+        cv2.imshow("frames2", frame)
         ### releaseing the writer
-        out.release()
-        
+        alltime = time.time() - start
+        print(alltime)
         ## closing all windows
-        cv2.destroyAllWindows()
+        if cv2.waitKey(5) & 0xFF == ord('q'):
+            cv2.destroyAllWindows()
+        # return frame, plate_num
 
 
 
@@ -275,7 +217,7 @@ def main(img_path=None, vid_path=None,vid_out = None):
 
 # ### for custom video
 # main(vid_path=0,vid_out="result/mp4") #### for webcam
+main(img_path="test_images/9.png") ## for image
 
-main(img_path="test_images/5.jpg") ## for image
-            
+
 
